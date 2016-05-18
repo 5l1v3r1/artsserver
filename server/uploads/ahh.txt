@@ -1,0 +1,48 @@
+here is what I have in the requestHandler,
+
+function findApps(request, response) {
+        console.log(request.url);
+        db.on('error', console.error);
+        Appointment.find(url.parse(request.url,true).query, function(err, Appointments) {
+                if (err) return console.error(err);
+                response.writeHead(200, {"Content-Type": "text/plain"});
+                response.write("callback(" + JSON.stringify(Appointments, undefined, 2) + ");");
+                response.end();
+        });
+}
+
+on http://localhost:8888/findApps?doc=Dr.Who&time=9:15
+I get this on web,
+
+callback([
+  {
+    "doc": "Dr.Who",
+    "date": "2014-08-01",
+    "time": "9:15",
+    "_id": "53c4405ae5f71e1f20453ac6",
+    "__v": 0,
+    "booked": false,
+    "duration": 15
+  }
+]);
+
+here is my ajax call,
+
+				$.ajax({
+                                        type: 'get',
+                                        url: 'http://localhost:8888/findApps?doc=Dr.Who&time=9:15',
+                                        dataType: 'jsonp',
+                                        jsonpCallback: 'callback',
+                                        success: function(data) {
+                                                alert(JSON.stringify(data));
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                                alert('bad');
+                                        }
+                                });
+
+
+and the allert I get is "[]"
+JSON.stringify can do the raw data I get from the web, but not here.
+It's working fine for creating an appointment or user.
+data[index] does not work either.
