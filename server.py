@@ -1,23 +1,41 @@
 import os
+from bson.objectid import ObjectId
+
 from flask import Flask, request, render_template, redirect, url_for
+from pymongo import MongoClient
+
+
+client = MongoClient("mongodb://artsadmin:bssquad@ds011314.mlab.com:11314/artsdb")
+
+content = client.artsdb.content
 
 app = Flask(__name__)
 
 @app.route('/content/setContent', methods=['POST'])
 def setContent():
-    
-    key             = request.form['key']
-    contentType     = request.form['contentType']
-    contentData     = request.form['contentData']
-    
-    print "hello world"
+	
+	contentType     = request.form['contentType']
+	contentData     = request.form['contentData']
+	
+	key = content.insert(
+		{
+			"contentType" : contentType,
+			"contentData" : contentData,
+		}
+	)
 
-    return 'Key: %s \nContent type: %s \nContent data: %s' % (key, contentType, contentData)
+	response = {
+		"key":str(key)
+	}
 
-@app.route('/content/getContent/<int:key>')
+	return str(response)
+
+@app.route('/content/getContent/<key>')
 def getContent(key):
-    
-    return 'Key: %d \nContent type: %d \nContent data: %d' % (key, key, key)
+
+	document = content.find_one({"_id": ObjectId(key)})
+	
+	return str(document)
 
 if __name__ == "__main__":
-    app.run()
+	app.run()
