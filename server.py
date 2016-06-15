@@ -1,4 +1,5 @@
 import os
+import json
 from bson.objectid import ObjectId
 
 from flask import Flask, request, render_template, redirect, url_for
@@ -33,7 +34,11 @@ def getContent(key):
 
 	document = content.find_one({"_id": ObjectId(key)})
 	
-	return str(document)
+	document.pop("_id", None)
+
+	document["key"] = key
+
+	return json.dumps(document)
 
 if __name__ == "__main__":
 	app.run()
