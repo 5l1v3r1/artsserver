@@ -20,7 +20,6 @@ def setContent():
 	contentType     = request.get_json().get("contentType")
 	contentData     = request.get_json().get("contentData")
 	contentSize     = request.get_json().get("contentSize")
-	print contentSize
 	
 	key = content.insert(
 		{
